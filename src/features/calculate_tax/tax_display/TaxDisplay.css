@@ -1,0 +1,32 @@
+.container .taxdisplay-container {
+  width: 60%;
+  margin: 2rem 0;
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  justify-content: space-around;
+}
+
+.flex-column .calc-text {
+  margin: 15px 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.calc-text div {
+  font-size: 1rem;
+}
+
+.tax-details {
+  width: 30%;
+}
+
+.calc-text .bold-600 {
+  font-size: large;
+  color: var(--purple-dark);
+}
+
+.calc-text .bold-400 {
+  font-size: larger;
+}
