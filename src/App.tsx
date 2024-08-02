@@ -1,7 +1,9 @@
 import { HashRouter, Route, Routes } from 'react-router-dom';
 // import Home from './pages/Home';
+import { Provider } from 'react-redux';
 import NotFound from './pages/NotFound';
 import TaxCalculator from './pages/tax_calculator/TaxCalculator';
+import { store } from './store/Store';
 
 export function App() {
   return (
@@ -14,8 +16,10 @@ export function App() {
 
 export function WrappedApp() {
   return (
-    <HashRouter>
-      <App />
-    </HashRouter>
+    <Provider store={store}>
+      <HashRouter>
+        <App />
+      </HashRouter>
+    </Provider>
   );
 }
