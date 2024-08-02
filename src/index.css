@@ -58,6 +58,10 @@ p {
     scroll-padding-top: 3rem;
   }
 } */
+body {
+  background-color: var(--grey-light);
+}
+
 .container {
   width: 100%;
   height: 100%;
