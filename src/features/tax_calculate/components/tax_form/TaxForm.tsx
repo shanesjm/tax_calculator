@@ -2,6 +2,7 @@ import { useFormik, FormikProvider } from 'formik';
 import * as Yup from 'yup';
 import './TaxFrom.css';
 import { Button, MenuItem, TextField } from '@mui/material';
+import TaxDisplay from '../tax_display/TaxDisplay';
 
 const taxYearList = [
   { label: 2021, value: '2021' },
@@ -43,17 +44,6 @@ function TaxForm() {
               label="Tax Amount"
               helperText={formik.errors.taxAmount}
             />
-
-            {/* <label htmlFor="taxAmount">tax Amount </label>
-            <input
-              id="taxAmount"
-              name="taxAmount"
-              className="input"
-              type="text"
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              value={formik.values.taxAmount}
-            /> */}
           </div>
 
           <div className="flex-column">
@@ -72,26 +62,7 @@ function TaxForm() {
                 </MenuItem>
               ))}
             </TextField>
-            {/* <label htmlFor="taxYear" style={{ display: 'block' }}>
-              Tax Year
-            </label>
-            <select
-              name="taxYear"
-              value={formik.values.taxYear}
-              className="input"
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              style={{ display: 'block' }}
-            >
-              <option value="2021" label="2021" />
-              <option value="blue" label="2022" />
-              <option value="green" label="2023" />
-            </select> */}
           </div>
-
-          {/* <button type="submit" className="button button--primary">
-            Submit
-          </button> */}
           <Button
             variant="contained"
             type="submit"
@@ -100,14 +71,6 @@ function TaxForm() {
             Calculate
           </Button>
         </form>
-        {/* <div className="error-container">
-          {formik.touched.taxAmount && formik.errors.taxAmount ? (
-            <div className="error">{formik.errors.taxAmount}</div>
-          ) : null}
-          {formik.errors.taxYear && (
-            <div className="error">{formik.errors.taxYear}</div>
-          )}
-        </div> */}
       </FormikProvider>
     </div>
   );
