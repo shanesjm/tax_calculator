@@ -1,6 +1,7 @@
 import { useFormik, FormikProvider } from 'formik';
 import * as Yup from 'yup';
 import './TaxFrom.css';
+import { Button, Card, MenuItem, TextField } from '@mui/material';
 import { Button, MenuItem, TextField } from '@mui/material';
 import TaxDisplay from '../tax_display/TaxDisplay';
 
@@ -30,7 +31,7 @@ function TaxForm() {
     },
   });
   return (
-    <div className="container taxform-container">
+    <Card className="container taxform-container">
       <h1 className="form-title">Tax Calculator</h1>
       <FormikProvider value={formik}>
         <form className="form flex-row" onSubmit={formik.handleSubmit}>
@@ -72,7 +73,7 @@ function TaxForm() {
           </Button>
         </form>
       </FormikProvider>
-    </div>
+    </Card>
   );
 }
 
