@@ -73,10 +73,7 @@ describe('TaxCalculator Component', () => {
   it('should display TaxForm and TaxDisplay on successful data fetch', async () => {
     mockUseFetchTaxBracketsQuery.mockReturnValue({
       data: {
-        tax_brackets: [
-          { min: 0, max: 50197, rate: 0.15 },
-          { min: 50197, max: 100392, rate: 0.205 },
-        ],
+        tax_brackets: [{ min: 0, max: 50197, rate: 0.15 }],
       },
       isFetching: false,
       isError: false,
@@ -85,7 +82,9 @@ describe('TaxCalculator Component', () => {
     renderWithStore({
       taxYear: 2022,
       annualIncome: 100000,
-      taxDetailsList: [],
+      taxDetailsList: [
+        { id: 1, bracket: '$1 - $50197', amount: 7529, rate: 15 },
+      ],
       totalTax: 0,
       netPay: 0,
       effectiveRate: 0,

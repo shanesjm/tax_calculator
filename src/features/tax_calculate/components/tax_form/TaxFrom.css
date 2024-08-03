@@ -21,6 +21,8 @@
 
 .tax-details-chart {
   width: 50%;
+  display: flex;
+  place-items: center;
 }
 
 .form.flex-row {

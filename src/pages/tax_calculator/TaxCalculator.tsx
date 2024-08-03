@@ -40,7 +40,7 @@ function TaxCalculator() {
 
   const {
     data: taxBracketResponse = { tax_brackets: [] },
-    isFetching,
+    isFetching = false,
     isError,
     error,
   } = useFetchTaxBracketsQuery(taxYear, { skip: !taxYear });
@@ -124,9 +124,7 @@ function TaxCalculator() {
     console.log({ error });
   }
 
-  return isFetching ? (
-    <div>loading</div>
-  ) : (
+  return (
     <div className="container">
       <TaxForm
         annualIncome={annualIncome}
@@ -139,6 +137,7 @@ function TaxCalculator() {
         totalTax={totalTax}
         netPay={netPay}
         effectiveRate={effectiveRate}
+        isFetching={isFetching}
       />
     </div>
   );
