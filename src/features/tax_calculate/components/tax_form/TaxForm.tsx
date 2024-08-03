@@ -2,8 +2,6 @@ import { useFormik, FormikProvider } from 'formik';
 import * as Yup from 'yup';
 import './TaxFrom.css';
 import { Button, Card, MenuItem, TextField } from '@mui/material';
-import { Button, MenuItem, TextField } from '@mui/material';
-import TaxDisplay from '../tax_display/TaxDisplay';
 
 const taxYearList = [
   { label: 2021, value: '2021' },
