@@ -8,10 +8,18 @@ import { useAppSelector } from '../../hooks/ReduxHooks';
 import { useFetchTaxBracketsQuery } from '../../features/tax_calculate/apis/TaxCalculateAPI';
 import {
   setAnnualIncome,
+  setEffectiveRate,
+  setNetPay,
   setTaxDetailsList,
   setTaxYear,
+  setTotalTax,
 } from '../../features/tax_calculate/slices/TaxCalculateSlice';
-import { TaxFromTypes } from '../../features/tax_calculate/types/CalculateTaxTypes';
+import {
+  TaxBracket,
+  TaxDetails,
+  TaxFromTypes,
+} from '../../features/tax_calculate/types/CalculateTaxTypes';
+import { CircularProgress } from '@mui/material';
 
 function TaxCalculator() {
   const dispatch = useDispatch();
@@ -23,6 +31,11 @@ function TaxCalculator() {
   const taxDetailsList = useAppSelector(
     (state) => state.taxCalculate.taxDetailsList
   );
+  const totalTax = useAppSelector((state) => state.taxCalculate.totalTax);
+  const netPay = useAppSelector((state) => state.taxCalculate.netPay);
+  const effectiveRate = useAppSelector(
+    (state) => state.taxCalculate.effectiveRate
+  );
 
   const {
     data = { tax_brackets: [] },
@@ -33,7 +46,7 @@ function TaxCalculator() {
 
   const calculateTaxes = (income: number, taxBracketList: TaxBracket[]) => {
     const calculatedTaxDetailList: TaxDetails[] = [];
-    let total = 0;
+    let calculatedTotalTax = 0;
 
     taxBracketList.forEach((bracket, index) => {
       const prevMax = index === 0 ? 0 : taxBracketList[index - 1].max!;
@@ -44,27 +57,44 @@ function TaxCalculator() {
       );
 
       if (taxableAmount > 0) {
-        total += taxForBracket;
+        calculatedTotalTax += taxForBracket;
         calculatedTaxDetailList.push({
           id: index + 1,
           bracket: `$${prevMax + 1} - $${bracket.max || '∞'}`,
           amount: taxForBracket,
-          rate: taxBracketList[index].rate * 100,
+          rate: +(taxBracketList[index].rate * 100).toFixed(2),
         });
       }
     });
     console.log({ calculatedTaxDetailList });
 
-    return calculatedTaxDetailList;
+    const calculatedNetPay = income - calculatedTotalTax;
+    const calculatedEffectiveRate =
+      income > 0
+        ? parseFloat(((calculatedTotalTax / income) * 100).toFixed(2))
+        : 0;
+
+    return {
+      calculatedTaxDetailList,
+      calculatedTotalTax,
+      calculatedNetPay,
+      calculatedEffectiveRate,
+    };
   };
 
   useEffect(() => {
     if (data.tax_brackets.length) {
-      const calculatedTaxes: TaxDetails[] = calculateTaxes(
-        annualIncome,
-        data.tax_brackets
-      );
-      dispatch(setTaxDetailsList(calculatedTaxes));
+      const {
+        calculatedTaxDetailList,
+        calculatedTotalTax,
+        calculatedNetPay,
+        calculatedEffectiveRate,
+      } = calculateTaxes(annualIncome, data.tax_brackets);
+
+      dispatch(setTaxDetailsList(calculatedTaxDetailList));
+      dispatch(setTotalTax(calculatedTotalTax));
+      dispatch(setNetPay(calculatedNetPay));
+      dispatch(setEffectiveRate(calculatedEffectiveRate));
     }
   }, [annualIncome, data, dispatch]);
 
@@ -73,14 +103,24 @@ function TaxCalculator() {
     dispatch(setAnnualIncome(formValues.annualIncome));
   };
 
-  return (
+  return isFetching ? (
+    <div className="container">
+      <CircularProgress />
+    </div>
+  ) : (
     <div className="container">
       <TaxForm
         annualIncome={annualIncome}
         taxYear={taxYear}
         handleSubmit={handleSubmit}
       />
-      <TaxDisplay taxDetailsList={[]} />
+      <TaxDisplay
+        taxDetailsList={taxDetailsList}
+        annualIncome={annualIncome}
+        totalTax={totalTax}
+        netPay={netPay}
+        effectiveRate={effectiveRate}
+      />
     </div>
   );
 }

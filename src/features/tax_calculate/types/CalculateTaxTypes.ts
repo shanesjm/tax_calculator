@@ -9,6 +9,9 @@ export type InitialTaxCalculateState = {
   taxDetailsList: TaxDetails[];
   taxYear: number;
   annualIncome: number;
+  totalTax: number;
+  netPay: number;
+  effectiveRate: number;
 };
 
 export type TaxBracketDTO = {
@@ -31,4 +34,12 @@ export type TaxFromTypes = {
   annualIncome: number | null;
   taxYear: number | null;
   handleSubmit: () => void;
+};
+
+export type TaxDisplayProps = {
+  taxDetailsList: TaxDetails[];
+  annualIncome: number;
+  totalTax: number;
+  netPay: number;
+  effectiveRate: number;
 };

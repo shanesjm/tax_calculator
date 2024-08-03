@@ -9,6 +9,9 @@ const initialState: InitialTaxCalculateState = {
   taxDetailsList: [],
   taxYear: 2022,
   annualIncome: 500000,
+  totalTax: 0,
+  netPay: 0,
+  effectiveRate: 0,
 };
 
 const TaxCalculateSlice = createSlice({
@@ -24,9 +27,24 @@ const TaxCalculateSlice = createSlice({
     setAnnualIncome(state, action: PayloadAction<number>) {
       state.annualIncome = action.payload;
     },
+    setTotalTax(state, action: PayloadAction<number>) {
+      state.totalTax = action.payload;
+    },
+    setNetPay(state, action: PayloadAction<number>) {
+      state.netPay = action.payload;
+    },
+    setEffectiveRate(state, action: PayloadAction<number>) {
+      state.effectiveRate = action.payload;
+    },
   },
 });
 
-export const { setTaxDetailsList, setTaxYear, setAnnualIncome } =
-  TaxCalculateSlice.actions;
+export const {
+  setTaxDetailsList,
+  setTaxYear,
+  setAnnualIncome,
+  setTotalTax,
+  setNetPay,
+  setEffectiveRate,
+} = TaxCalculateSlice.actions;
 export default TaxCalculateSlice.reducer;
