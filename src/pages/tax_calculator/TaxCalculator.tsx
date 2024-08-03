@@ -38,7 +38,7 @@ function TaxCalculator() {
   );
 
   const {
-    data = { tax_brackets: [] },
+    data: taxBracketResponse = { tax_brackets: [] },
     isFetching,
     isError,
     error,
@@ -83,20 +83,22 @@ function TaxCalculator() {
   };
 
   useEffect(() => {
-    if (data.tax_brackets.length) {
+    if (taxBracketResponse.tax_brackets.length) {
       const {
         calculatedTaxDetailList,
         calculatedTotalTax,
         calculatedNetPay,
         calculatedEffectiveRate,
-      } = calculateTaxes(annualIncome, data.tax_brackets);
+      } = calculateTaxes(annualIncome, taxBracketResponse.tax_brackets);
 
       dispatch(setTaxDetailsList(calculatedTaxDetailList));
       dispatch(setTotalTax(calculatedTotalTax));
       dispatch(setNetPay(calculatedNetPay));
       dispatch(setEffectiveRate(calculatedEffectiveRate));
+    } else {
+      console.log('ERROR MESSAGE', error);
     }
-  }, [annualIncome, data, dispatch]);
+  }, [taxYear, annualIncome, taxBracketResponse.tax_brackets, dispatch, error]);
 
   const handleSubmit = (formValues) => {
     dispatch(setTaxYear(formValues.taxYear));
