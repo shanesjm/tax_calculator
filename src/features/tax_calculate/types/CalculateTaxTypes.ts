@@ -43,4 +43,5 @@ export type TaxDisplayProps = {
   netPay: number;
   effectiveRate: number;
   isFetching: boolean;
+  isError: boolean;
 };

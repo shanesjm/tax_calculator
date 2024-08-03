@@ -1,13 +1,9 @@
-import { useFormik, FormikProvider } from 'formik';
+import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import './TaxFrom.css';
 import { Button, Card, MenuItem, TextField } from '@mui/material';
-import TaxDisplay from '../tax_display/TaxDisplay';
-import { useAppSelector } from '../../../../hooks/ReduxHooks';
-import Constants from '../../../../constants/Constants';
 import TaxYearList from '../../../../constants/Constants';
 import { TaxFromTypes } from '../../types/CalculateTaxTypes';
-import { useState } from 'react';
 
 const TaxFormValidation = Yup.object({
   annualIncome: Yup.number()
@@ -61,7 +57,6 @@ function TaxForm({ annualIncome, taxYear, handleSubmit }: TaxFromTypes) {
             name="taxYear"
             label="Select a Tax Year"
             select
-            style={{ width: '200px' }}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             value={formik.values.taxYear}

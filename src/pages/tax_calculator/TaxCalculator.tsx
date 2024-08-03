@@ -1,5 +1,5 @@
 import { useDispatch } from 'react-redux';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import TaxDisplay from '../../features/tax_calculate/components/tax_display/TaxDisplay';
 import TaxForm from '../../features/tax_calculate/components/tax_form/TaxForm';
@@ -17,10 +17,8 @@ import {
 import {
   TaxBracket,
   TaxDetails,
-  TaxFromTypes,
 } from '../../features/tax_calculate/types/CalculateTaxTypes';
-import { CircularProgress, Skeleton, Snackbar } from '@mui/material';
-import ErrorView from '../../common_components/ErrorView';
+import { Alert, Snackbar } from '@mui/material';
 
 function TaxCalculator() {
   const dispatch = useDispatch();
@@ -43,7 +41,12 @@ function TaxCalculator() {
     isFetching = false,
     isError,
     error,
+    refetch,
   } = useFetchTaxBracketsQuery(taxYear, { skip: !taxYear });
+
+  const [showNotification, setShowNotification] = useState<boolean>(
+    isError || false
+  );
 
   const calculateTaxes = (income: number, taxBracketList: TaxBracket[]) => {
     const calculatedTaxDetailList: TaxDetails[] = [];
@@ -96,21 +99,13 @@ function TaxCalculator() {
       dispatch(setTotalTax(calculatedTotalTax));
       dispatch(setNetPay(calculatedNetPay));
       dispatch(setEffectiveRate(calculatedEffectiveRate));
-    } else {
-      console.log('ERROR MESSAGE', error);
-      <Snackbar
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-        open={isError}
-        // onClose={handleClose}
-        message="I love snacks"
-        key="taxAPIError"
-      />;
     }
-  }, [taxYear, annualIncome, taxBracketResponse.tax_brackets, dispatch, error]);
+  }, [taxYear, annualIncome, taxBracketResponse.tax_brackets, dispatch]);
 
   const handleSubmit = (formValues) => {
     dispatch(setTaxYear(formValues.taxYear));
     dispatch(setAnnualIncome(formValues.annualIncome));
+    refetch();
   };
 
   if (isError) {
@@ -118,7 +113,7 @@ function TaxCalculator() {
       anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
       open
       // onClose={handleClose}
-      message="I love snacks"
+      message={`Error: ${error?.message || 'Internal Server Error'}`}
       key="taxAPIError"
     />;
     console.log({ error });
@@ -126,6 +121,16 @@ function TaxCalculator() {
 
   return (
     <div className="container">
+      {isError && (
+        <Snackbar
+          open={isError}
+          autoHideDuration={1000}
+          onClose={(() => alert(), setShowNotification(false))}
+          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        >
+          <Alert severity="error">Sorry! Something Went Wrong.</Alert>
+        </Snackbar>
+      )}
       <TaxForm
         annualIncome={annualIncome}
         taxYear={taxYear}
@@ -138,6 +143,7 @@ function TaxCalculator() {
         netPay={netPay}
         effectiveRate={effectiveRate}
         isFetching={isFetching}
+        isError={isError}
       />
     </div>
   );

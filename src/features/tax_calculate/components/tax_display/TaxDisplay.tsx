@@ -1,4 +1,4 @@
-import { Card } from '@mui/material';
+import { Box, Card } from '@mui/material';
 
 import './TaxDisplay.css';
 import { pieArcLabelClasses, PieChart } from '@mui/x-charts';
@@ -8,9 +8,11 @@ import TaxDisplaySkeleton from './TaxDisplaySkeleton';
 
 const sizing = {
   margin: { right: 5 },
-  width: 400,
-  height: 400,
-  legend: { hidden: false },
+  width: 300,
+  height: 300,
+  legend: {
+    hidden: true,
+  },
 };
 
 function TaxDisplay({
@@ -20,6 +22,7 @@ function TaxDisplay({
   netPay,
   effectiveRate,
   isFetching,
+  isError,
 }: TaxDisplayProps) {
   const netPayPercentage = parseFloat(
     ((netPay / annualIncome) * 100).toFixed(2)
@@ -32,7 +35,7 @@ function TaxDisplay({
     if (isFetching) {
       return <TaxDisplaySkeleton />;
     }
-    if (!taxDetailsList.length) {
+    if (!taxDetailsList.length || isError) {
       return (
         <Card className="container taxdisplay-container card flex-row">
           <ErrorView />
@@ -93,7 +96,7 @@ function TaxDisplay({
                   { id: 1, value: netPayPercentage, label: 'Net Pay' },
                   { id: 2, value: totalTaxPercentage, label: 'Total Tax' },
                 ],
-                outerRadius: 150,
+                outerRadius: 130,
                 arcLabel: (item) => `${item.label}(${item.value} %)`,
               },
             ]}
@@ -106,6 +109,16 @@ function TaxDisplay({
             // eslint-disable-next-line react/jsx-props-no-spreading
             {...sizing}
           />
+          <Box display="flex" justifyContent="center" marginTop={1}>
+            <Box display="flex" alignItems="center" marginRight={2}>
+              <Box width={16} height={16} bgcolor="#FFF1C9" marginRight={1} />
+              <div>Net Pay</div>
+            </Box>
+            <Box display="flex" alignItems="center">
+              <Box width={16} height={16} bgcolor="#EA5F89" marginRight={1} />
+              <div>Total Tax</div>
+            </Box>
+          </Box>
         </div>
       </Card>
     );
