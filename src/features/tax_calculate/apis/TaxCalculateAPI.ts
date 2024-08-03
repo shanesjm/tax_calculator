@@ -10,8 +10,8 @@ export const TaxCalculateAPI = createApi({
   }),
   endpoints(builder) {
     return {
-      fetchTaxBrackets: builder.query<TaxApiDTO, number | void>({
-        query(year = 2022) {
+      fetchTaxBrackets: builder.query<TaxApiDTO, number | undefined>({
+        query(year) {
           return `/tax-calculator/tax-year/${year}`;
         },
       }),

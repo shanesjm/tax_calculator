@@ -28,27 +28,27 @@ interface CustomError extends Error {
   data?: ApiError;
 }
 
-export const handleApiError = (error: CustomError | undefined) => {
-  if (!error) {
-    return 'An unknown error occurred';
-  }
+// export const handleApiError = (error: CustomError | undefined) => {
+//   if (!error) {
+//     return 'An unknown error occurred';
+//   }
 
-  if (error.status === 400) {
-    // Bad Request
-    return error.data?.message || 'Bad request';
-  } else if (error.status === 500) {
-    // Internal Server Error
-    return error.data?.message || 'Internal server error';
-  } else if (error.message === 'Network Error') {
-    // Network Error
-    return 'Network error. Please check your connection.';
-  } else {
-    // Other errors
-    return error.message || 'An error occurred';
-  }
-};
-const AnnualSalary = 115000;
-function TaxDisplay() {
+//   if (error.status === 400) {
+//     // Bad Request
+//     return error.data?.message || 'Bad request';
+//   } else if (error.status === 500) {
+//     // Internal Server Error
+//     return error.data?.message || 'Internal server error';
+//   } else if (error.message === 'Network Error') {
+//     // Network Error
+//     return 'Network error. Please check your connection.';
+//   } else {
+//     // Other errors
+//     return error.message || 'An error occurred';
+//   }
+// };
+
+function TaxDisplay(props: { taxDetailsList: TaxDetails[] }) {
   const dispatch = useDispatch();
 
   const taxYear = useAppSelector((state) => state.taxCalculate.taxYear);
@@ -64,7 +64,7 @@ function TaxDisplay() {
     isFetching,
     isError,
     error,
-  } = useFetchTaxBracketsQuery(taxYear);
+  } = useFetchTaxBracketsQuery(taxYear, { skip: !taxYear });
 
   const calculateTaxes = (income: number, taxBracketList: TaxBracket[]) => {
     const calculatedTaxDetailList: TaxDetails[] = [];
@@ -73,10 +73,7 @@ function TaxDisplay() {
     taxBracketList.forEach((bracket, index) => {
       const prevMax = index === 0 ? 0 : taxBracketList[index - 1].max!;
       const taxableAmount = Math.min(bracket.max || Infinity, income) - prevMax;
-      const taxForBracket = parseInt(
-        (taxableAmount * bracket.rate).toFixed(2),
-        10
-      );
+      const taxForBracket = +(taxableAmount * bracket.rate).toFixed(2);
 
       if (taxableAmount > 0) {
         total += taxForBracket;
@@ -84,7 +81,7 @@ function TaxDisplay() {
           id: index + 1,
           bracket: `$${prevMax + 1} - $${bracket.max || '∞'}`,
           amount: taxForBracket,
-          rate: taxBracketList[index].rate * 100,
+          rate: +(taxBracketList[index].rate * 100).toFixed(2),
         });
       }
     });
@@ -108,46 +105,48 @@ function TaxDisplay() {
   ) : (
     <Card className="container taxdisplay-container card flex-row">
       <div className="tax-details flex-column">
-        <div className="flex-row calc-text">
-          <div className="bold-400">Salary</div>
-          <div className="bold-400">10000</div>
-        </div>
-        <div className="flex-row calc-text">
-          <div className="bold-400">Total Tax</div>
-          <div className="bold-400">10000</div>
-        </div>
-        <div className="flex-row calc-text">
-          <div className="bold-600">Net pay</div>
-          <div className="bold-600">16000</div>
-        </div>
-        <div className="flex-row calc-text">
-          <div>Effective Rate</div>
-          <div>34.06%</div>
+        <div className="flex-column tax-details-top">
+          <div className="flex-row calc-text">
+            <div className="bold-400">Salary</div>
+            <div className="bold-400">10000</div>
+          </div>
+          <div className="flex-row calc-text">
+            <div className="bold-400">Total Tax</div>
+            <div className="bold-400">10000</div>
+          </div>
+          <div className="flex-row calc-text">
+            <div className="bold-600">Net pay</div>
+            <div className="bold-600">16000</div>
+          </div>
+          <div className="flex-row calc-text">
+            <div>Effective Rate</div>
+            <div>34.06%</div>
+          </div>
         </div>
         <div className="divider" />
-        <div className="flex-column">
-          <div className="flex-row calc-text">
+        <div className="flex-column tax-details-bottom">
+          <div className="flex-row calc-text table-text header">
             <div className="bold-600">Tax Bracket</div>
             <div className="bold-600">Tax Rate</div>
             <div className="bold-600">Tax Amount</div>
           </div>
-        </div>
-        <div className="flex-column">
           {taxDetailsList.length &&
             taxDetailsList.map((taxDetailsObj: TaxDetails) => {
               return (
-                <div className="flex-row calc-text" key={taxDetailsObj.id}>
+                <div
+                  className="flex-row calc-text table-text"
+                  key={taxDetailsObj.id}
+                >
                   <div>{taxDetailsObj.bracket}</div>
-                  <div>{taxDetailsObj.rate}</div>
-                  <div>{taxDetailsObj.amount}</div>
+                  <div>{taxDetailsObj.rate} %</div>
+                  <div>${taxDetailsObj.amount.toLocaleString()}</div>
                 </div>
               );
             })}
         </div>
       </div>
 
-      <div>
-        Graph goes here
+      <div className="tax-details-chart">
         <PieChart
           colors={['#30183f', '#9DE9F6']}
           series={[{ data: [{ value: 10 }, { value: 15 }] }]}

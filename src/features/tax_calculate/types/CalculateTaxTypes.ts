@@ -26,3 +26,9 @@ export type TaxBracket = {
 export type TaxApiDTO = {
   tax_brackets: TaxBracket[];
 };
+
+export type TaxFromTypes = {
+  annualIncome: number | null;
+  taxYear: number | null;
+  handleSubmit: () => void;
+};

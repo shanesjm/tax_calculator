@@ -15,11 +15,16 @@
 }
 
 .calc-text div {
-  font-size: 1rem;
+  font-size: small;
 }
 
 .tax-details {
-  width: 30%;
+  width: 50%;
+}
+
+.flex-row.table-text div {
+  width: 33.3%;
+  text-align: center;
 }
 
 .calc-text .bold-600 {
@@ -29,4 +34,16 @@
 
 .calc-text .bold-400 {
   font-size: larger;
+}
+
+.tax-details-top {
+  width: 80%;
+}
+
+.tax-details .table-text.header {
+  background: var(--grey-light);
+  padding: 1rem;
+}
+.tax-details-bottom {
+  width: 100%;
 }

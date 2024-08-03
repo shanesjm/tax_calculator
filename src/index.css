@@ -74,6 +74,8 @@ body {
 .flex-column {
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .flex-row {
@@ -97,6 +99,12 @@ body {
   /* width: 145px; */
 }
 
+.button.custom-button:hover {
+  background-color: var(--purple-dark);
+  color: white;
+  /* width: 145px; */
+}
+
 .error-container {
   background-color: antiquewhite;
   width: 33%;
@@ -116,6 +124,7 @@ body {
   border-bottom: 1px solid var(--grey-light);
   margin-top: 18px;
   margin-bottom: 18px;
+  width: 100%;
 }
 
 .bold-600 {
@@ -124,4 +133,8 @@ body {
 
 .bold-400 {
   font-weight: 400;
+}
+
+.select {
+  width: 200px;
 }
