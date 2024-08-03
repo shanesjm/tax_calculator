@@ -7,6 +7,7 @@ import { useFetchTaxBracketsQuery } from '../../apis/TaxCalculateAPI';
 import { useEffect } from 'react';
 import { TaxBracket, TaxDetails } from '../../types/CalculateTaxTypes';
 import { setTaxDetailsList } from '../../slices/TaxCalculateSlice';
+import { PieChart } from '@mui/x-charts';
 
 const taxData = [
   { max: 49020, min: 0, rate: 0.15 },
@@ -126,9 +127,9 @@ function TaxDisplay() {
         <div className="divider" />
         <div className="flex-column">
           <div className="flex-row calc-text">
-            <div>Tax Bracket</div>
-            <div>Tax Rate</div>
-            <div>Tax Amount</div>
+            <div className="bold-600">Tax Bracket</div>
+            <div className="bold-600">Tax Rate</div>
+            <div className="bold-600">Tax Amount</div>
           </div>
         </div>
         <div className="flex-column">
@@ -145,7 +146,15 @@ function TaxDisplay() {
         </div>
       </div>
 
-      <div> Graph goes here</div>
+      <div>
+        Graph goes here
+        <PieChart
+          colors={['#30183f', '#9DE9F6']}
+          series={[{ data: [{ value: 10 }, { value: 15 }] }]}
+          width={400}
+          height={200}
+        />
+      </div>
     </Card>
   );
 }
