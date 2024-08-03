@@ -3,45 +3,8 @@ import { Card } from '@mui/material';
 import './TaxDisplay.css';
 import { PieChart } from '@mui/x-charts';
 import { TaxDetails, TaxDisplayProps } from '../../types/CalculateTaxTypes';
+import ErrorView from '../../../../common_components/ErrorView';
 
-const taxData = [
-  { max: 49020, min: 0, rate: 0.15 },
-  { max: 98040, min: 49020, rate: 0.205 },
-  { max: 151978, min: 98040, rate: 0.26 },
-  { max: 216511, min: 151978, rate: 0.29 },
-  { min: 216511, rate: 0.33 },
-];
-
-interface ApiError {
-  code: string;
-  field: string;
-  message: string;
-}
-
-interface CustomError extends Error {
-  status?: number;
-  data?: ApiError;
-}
-
-// export const handleApiError = (error: CustomError | undefined) => {
-//   if (!error) {
-//     return 'An unknown error occurred';
-//   }
-
-//   if (error.status === 400) {
-//     // Bad Request
-//     return error.data?.message || 'Bad request';
-//   } else if (error.status === 500) {
-//     // Internal Server Error
-//     return error.data?.message || 'Internal server error';
-//   } else if (error.message === 'Network Error') {
-//     // Network Error
-//     return 'Network error. Please check your connection.';
-//   } else {
-//     // Other errors
-//     return error.message || 'An error occurred';
-//   }
-// };
 function TaxDisplay({
   taxDetailsList,
   annualIncome,
@@ -56,7 +19,7 @@ function TaxDisplay({
     ((totalTax / annualIncome) * 100).toFixed(2)
   );
 
-  return (
+  return !taxDetailsList.length ? (
     <Card className="container taxdisplay-container card flex-row">
       <div className="tax-details flex-column">
         <div className="flex-column tax-details-top">
@@ -122,6 +85,10 @@ function TaxDisplay({
           }}
         />
       </div>
+    </Card>
+  ) : (
+    <Card className="container taxdisplay-container card flex-row">
+      <ErrorView />
     </Card>
   );
 }

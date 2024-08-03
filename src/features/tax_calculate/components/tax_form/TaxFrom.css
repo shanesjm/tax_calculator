@@ -22,3 +22,8 @@
 .tax-details-chart {
   width: 50%;
 }
+
+.form.flex-row {
+  align-items: flex-start;
+  height: 80px;
+}

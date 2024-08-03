@@ -36,20 +36,22 @@ function TaxForm({ annualIncome, taxYear, handleSubmit }: TaxFromTypes) {
   // });
   return (
     <Card className="container taxform-container">
-      <h1 className="form-title">Tax Calculator</h1>
+      <h1 className="primary-title">Tax Calculator</h1>
       <form className="form flex-row" onSubmit={formik.handleSubmit}>
         <div className="flex-column">
           <TextField
             id="outlined-error"
             value={formik.values.annualIncome}
-            label="Tax Amount"
+            label="Annual income"
             name="annualIncome"
             onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
             error={
               formik.touched.annualIncome && Boolean(formik.errors.annualIncome)
             }
             helperText={formik.errors.annualIncome}
             className="text-field"
+            type="number"
           />
         </div>
 
@@ -61,6 +63,7 @@ function TaxForm({ annualIncome, taxYear, handleSubmit }: TaxFromTypes) {
             select
             style={{ width: '200px' }}
             onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
             value={formik.values.taxYear}
             error={formik.touched.taxYear && Boolean(formik.errors.taxYear)}
             helperText={formik.errors.taxYear}

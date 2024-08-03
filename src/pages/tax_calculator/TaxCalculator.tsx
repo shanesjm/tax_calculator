@@ -19,7 +19,8 @@ import {
   TaxDetails,
   TaxFromTypes,
 } from '../../features/tax_calculate/types/CalculateTaxTypes';
-import { CircularProgress } from '@mui/material';
+import { CircularProgress, Skeleton, Snackbar } from '@mui/material';
+import ErrorView from '../../common_components/ErrorView';
 
 function TaxCalculator() {
   const dispatch = useDispatch();
@@ -97,6 +98,13 @@ function TaxCalculator() {
       dispatch(setEffectiveRate(calculatedEffectiveRate));
     } else {
       console.log('ERROR MESSAGE', error);
+      <Snackbar
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        open={isError}
+        // onClose={handleClose}
+        message="I love snacks"
+        key="taxAPIError"
+      />;
     }
   }, [taxYear, annualIncome, taxBracketResponse.tax_brackets, dispatch, error]);
 
@@ -105,10 +113,19 @@ function TaxCalculator() {
     dispatch(setAnnualIncome(formValues.annualIncome));
   };
 
+  if (isError) {
+    <Snackbar
+      anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      open
+      // onClose={handleClose}
+      message="I love snacks"
+      key="taxAPIError"
+    />;
+    console.log({ error });
+  }
+
   return isFetching ? (
-    <div className="container">
-      <CircularProgress />
-    </div>
+    <div>loading</div>
   ) : (
     <div className="container">
       <TaxForm

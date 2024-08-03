@@ -96,13 +96,12 @@ body {
 .button.custom-button {
   background-color: var(--orange);
   color: white;
-  /* width: 145px; */
+  height: 55px;
 }
 
 .button.custom-button:hover {
   background-color: var(--purple-dark);
   color: white;
-  /* width: 145px; */
 }
 
 .error-container {
@@ -137,4 +136,28 @@ body {
 
 .select {
   width: 200px;
+}
+
+.primary-title {
+  font-style: normal;
+  font-weight: 600;
+  font-size: 2rem;
+  color: var(--purple-dark);
+  padding-bottom: 2rem;
+}
+
+.secondary-title {
+  font-style: normal;
+  font-weight: 600;
+  font-size: 1.5rem;
+  color: var(--purple-dark);
+  padding-bottom: 1rem;
+}
+
+.paragraph {
+  font-style: normal;
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--purple-dark);
+  padding-bottom: 1rem;
 }
