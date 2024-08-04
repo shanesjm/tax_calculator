@@ -17,6 +17,7 @@ import {
 import {
   TaxBracket,
   TaxDetails,
+  TaxFormValues,
 } from '../../features/tax_calculate/types/CalculateTaxTypes';
 import { Alert, Snackbar } from '@mui/material';
 
@@ -44,10 +45,6 @@ function TaxCalculator() {
     refetch,
   } = useFetchTaxBracketsQuery(taxYear, { skip: !taxYear });
 
-  const [showNotification, setShowNotification] = useState<boolean>(
-    isError || false
-  );
-
   const calculateTaxes = (income: number, taxBracketList: TaxBracket[]) => {
     const calculatedTaxDetailList: TaxDetails[] = [];
     let calculatedTotalTax = 0;
@@ -70,7 +67,7 @@ function TaxCalculator() {
         });
       }
     });
-    console.log({ calculatedTaxDetailList });
+    // console.log({ calculatedTaxDetailList });
 
     const calculatedNetPay = income - calculatedTotalTax;
     const calculatedEffectiveRate =
@@ -102,22 +99,11 @@ function TaxCalculator() {
     }
   }, [taxYear, annualIncome, taxBracketResponse.tax_brackets, dispatch]);
 
-  const handleSubmit = (formValues) => {
+  const handleSubmit = (formValues: TaxFormValues) => {
     dispatch(setTaxYear(formValues.taxYear));
     dispatch(setAnnualIncome(formValues.annualIncome));
-    refetch();
+    // refetch();
   };
-
-  if (isError) {
-    <Snackbar
-      anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-      open
-      // onClose={handleClose}
-      message={`Error: ${error?.message || 'Internal Server Error'}`}
-      key="taxAPIError"
-    />;
-    console.log({ error });
-  }
 
   return (
     <div className="container">
@@ -125,8 +111,10 @@ function TaxCalculator() {
         <Snackbar
           open={isError}
           autoHideDuration={1000}
-          onClose={(() => alert(), setShowNotification(false))}
-          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+          anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+          onClose={() => {
+            setShowNotification(false);
+          }}
         >
           <Alert severity="error">Sorry! Something Went Wrong.</Alert>
         </Snackbar>
@@ -135,6 +123,7 @@ function TaxCalculator() {
         annualIncome={annualIncome}
         taxYear={taxYear}
         handleSubmit={handleSubmit}
+        isFetching={isFetching}
       />
       <TaxDisplay
         taxDetailsList={taxDetailsList}

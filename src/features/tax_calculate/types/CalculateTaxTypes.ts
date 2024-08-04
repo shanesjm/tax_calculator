@@ -30,10 +30,16 @@ export type TaxApiDTO = {
   tax_brackets: TaxBracket[];
 };
 
-export type TaxFromTypes = {
+export type TaxFormValues = {
+  annualIncome: number;
+  taxYear: number; // or number if taxYear is a number
+};
+
+export type TaxFormTypes = {
   annualIncome: number | null;
   taxYear: number | null;
-  handleSubmit: () => void;
+  handleSubmit: (values: TaxFormValues) => void;
+  isFetching: boolean;
 };
 
 export type TaxDisplayProps = {

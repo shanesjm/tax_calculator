@@ -2,17 +2,18 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import './TaxFrom.css';
 import { Button, Card, MenuItem, TextField } from '@mui/material';
-import TaxYearList from '../../../../constants/Constants';
-import { TaxFromTypes } from '../../types/CalculateTaxTypes';
+import {
+  TaxYearList,
+  TaxFormValidation,
+} from '../../../../constants/Constants';
+import { TaxFormTypes } from '../../types/CalculateTaxTypes';
 
-const TaxFormValidation = Yup.object({
-  annualIncome: Yup.number()
-    .min(1, 'The tax should not be less than 0')
-    .required('Please enter your Annal Income'),
-  taxYear: Yup.number().required('Please select a tax year'),
-});
-
-function TaxForm({ annualIncome, taxYear, handleSubmit }: TaxFromTypes) {
+function TaxForm({
+  annualIncome,
+  taxYear,
+  handleSubmit,
+  isFetching,
+}: TaxFormTypes) {
   const formik = useFormik({
     initialValues: {
       annualIncome,
@@ -48,6 +49,7 @@ function TaxForm({ annualIncome, taxYear, handleSubmit }: TaxFromTypes) {
             helperText={formik.errors.annualIncome}
             className="text-field"
             type="number"
+            disabled={isFetching}
           />
         </div>
 
@@ -63,6 +65,7 @@ function TaxForm({ annualIncome, taxYear, handleSubmit }: TaxFromTypes) {
             error={formik.touched.taxYear && Boolean(formik.errors.taxYear)}
             helperText={formik.errors.taxYear}
             className="text-field select"
+            disabled={isFetching}
           >
             {TaxYearList.map((option) => (
               <MenuItem key={option.value} value={option.value}>
@@ -75,6 +78,7 @@ function TaxForm({ annualIncome, taxYear, handleSubmit }: TaxFromTypes) {
           variant="contained"
           type="submit"
           className="button custom-button"
+          disabled={isFetching}
         >
           Calculate
         </Button>

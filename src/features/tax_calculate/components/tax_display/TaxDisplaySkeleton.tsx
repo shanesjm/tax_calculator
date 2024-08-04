@@ -2,7 +2,10 @@ import { Card, Skeleton, Stack } from '@mui/material';
 
 function TaxDisplaySkeleton() {
   return (
-    <Card className="container taxdisplay-container card flex-row">
+    <Card
+      className="container taxdisplay-container card flex-row"
+      data-testid="skeleton"
+    >
       <Stack spacing={1} sx={{ width: '55%', height: '100%' }}>
         {/* For variant="text", adjust the height via font-size */}
         <Skeleton variant="text" sx={{ fontSize: '1rem' }} />

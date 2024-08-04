@@ -8,7 +8,7 @@ import {
 const initialState: InitialTaxCalculateState = {
   taxDetailsList: [],
   taxYear: 2022,
-  annualIncome: 500000,
+  annualIncome: 50000,
   totalTax: 0,
   netPay: 0,
   effectiveRate: 0,
