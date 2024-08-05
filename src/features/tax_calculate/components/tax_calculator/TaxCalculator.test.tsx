@@ -4,8 +4,8 @@ import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import { vi } from 'vitest';
 import TaxCalculator from './TaxCalculator';
-import taxCalculateReducer from '../../features/tax_calculate/slices/TaxCalculateSlice';
-import { useFetchTaxBracketsQuery } from '../../features/tax_calculate/apis/TaxCalculateAPI';
+import taxCalculateReducer from '../../slices/TaxCalculateSlice';
+import { useFetchTaxBracketsQuery } from '../../apis/TaxCalculateAPI';
 
 // Mock the API call
 vi.mock('../../features/tax_calculate/apis/TaxCalculateAPI', () => ({

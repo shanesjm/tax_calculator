@@ -1,25 +1,28 @@
 import { useDispatch } from 'react-redux';
 import { useEffect, useState } from 'react';
+import { Alert, Snackbar } from '@mui/material';
 
-import TaxDisplay from '../../features/tax_calculate/components/tax_display/TaxDisplay';
-import TaxForm from '../../features/tax_calculate/components/tax_form/TaxForm';
+import TaxDisplay from '../tax_display/TaxDisplay';
+import TaxForm from '../tax_form/TaxForm';
 import './TaxCalculator.css';
-import { useAppSelector } from '../../hooks/ReduxHooks';
-import { useFetchTaxBracketsQuery } from '../../features/tax_calculate/apis/TaxCalculateAPI';
+import { useAppSelector } from '../../../../hooks/ReduxHooks';
+import { useFetchTaxBracketsQuery } from '../../apis/TaxCalculateAPI';
 import {
   setAnnualIncome,
   setEffectiveRate,
+  setErrorMessage,
   setNetPay,
+  setShowNotification,
   setTaxDetailsList,
   setTaxYear,
   setTotalTax,
-} from '../../features/tax_calculate/slices/TaxCalculateSlice';
+} from '../../slices/TaxCalculateSlice';
 import {
   TaxBracket,
   TaxDetails,
   TaxFormValues,
-} from '../../features/tax_calculate/types/CalculateTaxTypes';
-import { Alert, Snackbar } from '@mui/material';
+} from '../../types/CalculateTaxTypes';
+import handleApiError from '../../../../utils/HandleError';
 
 function TaxCalculator() {
   const dispatch = useDispatch();
@@ -33,6 +36,12 @@ function TaxCalculator() {
   );
   const totalTax = useAppSelector((state) => state.taxCalculate.totalTax);
   const netPay = useAppSelector((state) => state.taxCalculate.netPay);
+  const errorMessage = useAppSelector(
+    (state) => state.taxCalculate.errorMessage
+  );
+  const showNotification = useAppSelector(
+    (state) => state.taxCalculate.showNotification
+  );
   const effectiveRate = useAppSelector(
     (state) => state.taxCalculate.effectiveRate
   );
@@ -52,9 +61,8 @@ function TaxCalculator() {
     taxBracketList.forEach((bracket, index) => {
       const prevMax = index === 0 ? 0 : taxBracketList[index - 1].max!;
       const taxableAmount = Math.min(bracket.max || Infinity, income) - prevMax;
-      const taxForBracket = parseInt(
-        (taxableAmount * bracket.rate).toFixed(2),
-        10
+      const taxForBracket = parseFloat(
+        (taxableAmount * bracket.rate).toFixed(2)
       );
 
       if (taxableAmount > 0) {
@@ -82,6 +90,15 @@ function TaxCalculator() {
       calculatedEffectiveRate,
     };
   };
+  useEffect(() => {
+    if (isError) {
+      handleApiError(error);
+      dispatch(setShowNotification(true));
+      dispatch(setErrorMessage('Something Went Wrong.'));
+    } else {
+      dispatch(setErrorMessage(''));
+    }
+  }, [isError, error, dispatch]);
 
   useEffect(() => {
     if (taxBracketResponse.tax_brackets.length) {
@@ -102,21 +119,21 @@ function TaxCalculator() {
   const handleSubmit = (formValues: TaxFormValues) => {
     dispatch(setTaxYear(formValues.taxYear));
     dispatch(setAnnualIncome(formValues.annualIncome));
-    // refetch();
+    if (errorMessage) refetch();
   };
 
   return (
     <div className="container">
       {isError && (
         <Snackbar
-          open={isError}
-          autoHideDuration={1000}
+          open={showNotification}
+          autoHideDuration={5000}
           anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
           onClose={() => {
-            setShowNotification(false);
+            dispatch(setShowNotification(false));
           }}
         >
-          <Alert severity="error">Sorry! Something Went Wrong.</Alert>
+          <Alert severity="error">{errorMessage}</Alert>
         </Snackbar>
       )}
       <TaxForm

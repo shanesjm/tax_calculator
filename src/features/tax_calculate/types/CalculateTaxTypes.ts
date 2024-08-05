@@ -12,6 +12,9 @@ export type InitialTaxCalculateState = {
   totalTax: number;
   netPay: number;
   effectiveRate: number;
+  showNotification: boolean;
+  isAPIError: boolean;
+  errorMessage: string;
 };
 
 export type TaxBracketDTO = {
@@ -32,12 +35,12 @@ export type TaxApiDTO = {
 
 export type TaxFormValues = {
   annualIncome: number;
-  taxYear: number; // or number if taxYear is a number
+  taxYear: number;
 };
 
 export type TaxFormTypes = {
-  annualIncome: number | null;
-  taxYear: number | null;
+  annualIncome: number;
+  taxYear: number;
   handleSubmit: (values: TaxFormValues) => void;
   isFetching: boolean;
 };
@@ -50,4 +53,19 @@ export type TaxDisplayProps = {
   effectiveRate: number;
   isFetching: boolean;
   isError: boolean;
+};
+
+export type TaxGraphProps = {
+  netPayPercentage: number;
+  totalTaxPercentage: number;
+};
+
+export type TaxBracketProps = {
+  taxDetailsList: TaxDetails[];
+};
+export type TaxSummaryProps = {
+  annualIncome: number;
+  totalTax: number;
+  netPay: number;
+  effectiveRate: number;
 };

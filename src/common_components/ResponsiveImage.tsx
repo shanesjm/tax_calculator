@@ -1,5 +1,5 @@
 import { Box } from '@mui/material';
-import { ResponsiveImageProps } from '../features/tax_calculate/types/CommonTypes';
+import { ResponsiveImageProps } from '../common_types/CommonTypes';
 
 function ResponsiveImage({
   src,

@@ -2,24 +2,16 @@ import { HashRouter, Route, Routes } from 'react-router-dom';
 // import Home from './pages/Home';
 import { Provider } from 'react-redux';
 import NotFound from './pages/NotFound';
-import TaxCalculator from './pages/tax_calculator/TaxCalculator';
+import TaxCalculator from './features/tax_calculate/components/tax_calculator/TaxCalculator';
 import { store } from './store/Store';
+import Tax from './pages/Tax';
 
-export function App() {
-  return (
-    <Routes>
-      <Route path="/" element={<TaxCalculator />} />
-      <Route path="*" element={<NotFound />} />
-    </Routes>
-  );
-}
-
-export function WrappedApp() {
+function App() {
   return (
     <Provider store={store}>
-      <HashRouter>
-        <App />
-      </HashRouter>
+      <TaxCalculator />
     </Provider>
   );
 }
+
+export default App;

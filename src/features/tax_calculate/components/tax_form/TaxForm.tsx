@@ -1,5 +1,4 @@
 import { useFormik } from 'formik';
-import * as Yup from 'yup';
 import './TaxFrom.css';
 import { Button, Card, MenuItem, TextField } from '@mui/material';
 import {
@@ -20,17 +19,11 @@ function TaxForm({
       taxYear,
     },
     validationSchema: TaxFormValidation,
-
     onSubmit: (values) => {
-      console.log({ values });
       handleSubmit(values);
     },
   });
 
-  // const [taxFromValues, setTaxFromValues] = useState({
-  //   annualIncome,
-  //   taxYear,
-  // });
   return (
     <Card className="container taxform-container">
       <h1 className="primary-title">Tax Calculator</h1>
@@ -57,7 +50,7 @@ function TaxForm({
           <TextField
             id="outlined-select-currency"
             name="taxYear"
-            label="Select a Tax Year"
+            label="Tax Year"
             select
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}

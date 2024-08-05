@@ -9,7 +9,11 @@ export const TaxYearList = [
 
 export const TaxFormValidation = Yup.object({
   annualIncome: Yup.number()
-    .min(1, 'The tax should not be less than 0')
-    .required('Please enter your Annal Income'),
+    .min(1, 'Amount should be 1 - 100000000')
+    .max(100000000, 'Amount should be 1 - 100000000')
+    .required('Please enter your Annal Income')
+    .test('is-decimal', 'Upto 2 decimals Only', (value) =>
+      /^\d+(\.\d{1,2})?$/.test(value?.toString() || '')
+    ),
   taxYear: Yup.number().required('Please select a tax year'),
 });

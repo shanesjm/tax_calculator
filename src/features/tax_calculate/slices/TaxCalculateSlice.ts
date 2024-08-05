@@ -12,6 +12,9 @@ const initialState: InitialTaxCalculateState = {
   totalTax: 0,
   netPay: 0,
   effectiveRate: 0,
+  showNotification: false,
+  isAPIError: false,
+  errorMessage: '',
 };
 
 const TaxCalculateSlice = createSlice({
@@ -36,6 +39,15 @@ const TaxCalculateSlice = createSlice({
     setEffectiveRate(state, action: PayloadAction<number>) {
       state.effectiveRate = action.payload;
     },
+    setShowNotification(state, action: PayloadAction<boolean>) {
+      state.showNotification = action.payload;
+    },
+    setIsAPIError(state, action: PayloadAction<boolean>) {
+      state.isAPIError = action.payload;
+    },
+    setErrorMessage(state, action: PayloadAction<string>) {
+      state.errorMessage = action.payload;
+    },
   },
 });
 
@@ -46,5 +58,8 @@ export const {
   setTotalTax,
   setNetPay,
   setEffectiveRate,
+  setShowNotification,
+  setIsAPIError,
+  setErrorMessage,
 } = TaxCalculateSlice.actions;
 export default TaxCalculateSlice.reducer;

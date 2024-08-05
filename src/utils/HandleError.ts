@@ -4,29 +4,45 @@ type ApiError = {
   message: string;
 };
 
-type CustomError = Error & {
-  status?: number;
-  data?: ApiError;
+type Error = Error & {
+  status?: string;
+  error?: string;
 };
 
-export const handleApiError = (error: CustomError | undefined) => {
-  if (!error) {
-    return 'An unknown error occurred';
-  }
+type CustomError = {
+  code: string;
+  field: string;
+  message: string;
+};
 
-  if (error.status === 400) {
-    // Bad Request
-    return error.data?.message || 'Bad request';
-  } else if (error.status === 500) {
-    // Internal Server Error
-    return error.data?.message || 'Internal server error';
-  } else if (error.message === 'Network Error') {
-    // Network Error
-    return 'Network error. Please check your connection.';
-  } else {
-    // Other errors
-    return error.message || 'An error occurred';
+type CustomErrorResponseType = {
+  data: {
+    error: CustomError[];
+  };
+};
+
+export const handleApiError = (error: Error | CustomErrorResponseType) => {
+  let errorMessage = 'Something went wrong';
+  if (typeof error === 'object' && 'status' in error) {
+    if (error.status === 500) {
+      errorMessage =
+        error?.data?.errors?.[0]?.message || 'Internal server error';
+    }
+    if (error.status === 400) {
+      errorMessage = error?.data?.errors?.[0]?.message || 'Bad request';
+    }
+    if (error.status === 'FETCH_ERROR') {
+      errorMessage = 'Network error. Please check your internet connection.';
+    }
+    if (error.status === 'TIMEOUT_ERROR') {
+      errorMessage = 'The request timed out. Please try again later.';
+    }
   }
+  console.error({
+    timeStamp: new Date(),
+    status: error.status || 500,
+    message: errorMessage,
+  });
 };
 
 export default handleApiError;
