@@ -2,12 +2,12 @@
 
 A Tax calculator app that uses advanced React techniques focusing on efficient API calls, user data and error handling. Explore best practices in app architecture, coding style, and performance optimization.
 
-| Libraries Used            | Description                                                     |
-| ------------------------- | --------------------------------------------------------------- |
-| Modern Redux Toolkit      | For centralized and predictable state management.               |
-| RTL (Redux Toolkit Query) | For centralized API caching and performance optimization .      |
-| Unit and Integration test | To verify Functionality and Integration using RTL, JEST, Vitest |
-| Material UI               | For inbuilt / Ready to use and Consistent UI.                   |
+| Libraries Used                  | Description                                                             |
+| ------------------------------- | ----------------------------------------------------------------------- |
+| Modern Redux Toolkit            | For centralized and predictable state management.                       |
+| RTK Query (Redux Toolkit Query) | For efficient data fetching, caching, and easy integration with Redux . |
+| Unit and Integration test       | To verify Functionality and Integration using RTL, JEST, Vitest         |
+| Material UI                     | For inbuilt, Optimized, Ready-to-use, and Consistent UI.                |
 
 ## Available Scripts
 
