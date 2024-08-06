@@ -56,7 +56,8 @@ function TaxCalculator() {
     refetch,
   } = useFetchTaxBracketsQuery(taxYear);
 
-  // This  function can be memoized if it was an expensive calculation or called by many child components
+  // This result of this function can be momoized using useMemo Hook if it was an expensive calculation
+  // We can also use useCallback to avoid ununcessary renders if it was an expensive function and if it was passed to child components.
   const calculateTaxes = (income: number, taxBracketList: TaxBracket[]) => {
     const calculatedTaxDetailList: TaxDetails[] = [];
     let calculatedTotalTax = 0;
