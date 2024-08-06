@@ -1,10 +1,9 @@
 import { useDispatch } from 'react-redux';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { Alert, Snackbar } from '@mui/material';
 
 import TaxDisplay from '../tax_display/TaxDisplay';
 import TaxForm from '../tax_form/TaxForm';
-import './TaxCalculator.css';
 import { useAppSelector } from '../../../../hooks/ReduxHooks';
 import { useFetchTaxBracketsQuery } from '../../apis/TaxCalculateAPI';
 import {
@@ -24,9 +23,11 @@ import {
 } from '../../types/CalculateTaxTypes';
 import handleApiError from '../../../../utils/HandleError';
 
+// This is the only smart component, the child components are views and rely only on props
+// The API has to be called only when the Year changes and not the annualIncome
 function TaxCalculator() {
   const dispatch = useDispatch();
-
+  // select the state variables from store
   const taxYear = useAppSelector((state) => state.taxCalculate.taxYear);
   const annualIncome = useAppSelector(
     (state) => state.taxCalculate.annualIncome
@@ -46,14 +47,16 @@ function TaxCalculator() {
     (state) => state.taxCalculate.effectiveRate
   );
 
+  // useFetchTaxBracketsQuery hook caches API response for performance optimization
   const {
     data: taxBracketResponse = { tax_brackets: [] },
     isFetching = false,
     isError,
     error,
     refetch,
-  } = useFetchTaxBracketsQuery(taxYear, { skip: !taxYear });
+  } = useFetchTaxBracketsQuery(taxYear);
 
+  // This  function can be memoized if it was an expensive calculation or called by many child components
   const calculateTaxes = (income: number, taxBracketList: TaxBracket[]) => {
     const calculatedTaxDetailList: TaxDetails[] = [];
     let calculatedTotalTax = 0;
@@ -61,27 +64,21 @@ function TaxCalculator() {
     taxBracketList.forEach((bracket, index) => {
       const prevMax = index === 0 ? 0 : taxBracketList[index - 1].max!;
       const taxableAmount = Math.min(bracket.max || Infinity, income) - prevMax;
-      const taxForBracket = parseFloat(
-        (taxableAmount * bracket.rate).toFixed(2)
-      );
-
+      const taxAmountForTheBracket = taxableAmount * bracket.rate;
       if (taxableAmount > 0) {
-        calculatedTotalTax += taxForBracket;
+        calculatedTotalTax += taxAmountForTheBracket;
         calculatedTaxDetailList.push({
           id: index + 1,
           bracket: `$${prevMax + 1} - $${bracket.max || '∞'}`,
-          amount: taxForBracket,
-          rate: +(taxBracketList[index].rate * 100).toFixed(2),
+          amount: taxAmountForTheBracket,
+          rate: +(taxBracketList[index].rate * 100),
         });
       }
     });
-    // console.log({ calculatedTaxDetailList });
 
     const calculatedNetPay = income - calculatedTotalTax;
     const calculatedEffectiveRate =
-      income > 0
-        ? parseFloat(((calculatedTotalTax / income) * 100).toFixed(2))
-        : 0;
+      income > 0 ? (calculatedTotalTax / income) * 100 : 0;
 
     return {
       calculatedTaxDetailList,
@@ -90,16 +87,18 @@ function TaxCalculator() {
       calculatedEffectiveRate,
     };
   };
+
   useEffect(() => {
     if (isError) {
-      handleApiError(error);
+      const errMsg = handleApiError(error);
       dispatch(setShowNotification(true));
-      dispatch(setErrorMessage('Something Went Wrong.'));
+      dispatch(setErrorMessage(errMsg));
     } else {
       dispatch(setErrorMessage(''));
     }
   }, [isError, error, dispatch]);
 
+  // We need to recalculate taxes and update store if the relevant state changes
   useEffect(() => {
     if (taxBracketResponse.tax_brackets.length) {
       const {
@@ -119,11 +118,13 @@ function TaxCalculator() {
   const handleSubmit = (formValues: TaxFormValues) => {
     dispatch(setTaxYear(formValues.taxYear));
     dispatch(setAnnualIncome(formValues.annualIncome));
+    // The user should be able to calculate the tax again if an error has occured.
     if (errorMessage) refetch();
   };
 
   return (
     <div className="container">
+      {/* show notification and close it after 5 seconds */}
       {isError && (
         <Snackbar
           open={showNotification}

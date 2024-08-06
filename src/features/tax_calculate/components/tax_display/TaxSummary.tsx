@@ -14,7 +14,9 @@ function TaxSummary({
       </div>
       <div className="flex-row calc-text">
         <div className="bold-400">Total Tax</div>
-        <div className="bold-400">${totalTax.toLocaleString()}</div>
+        <div className="bold-400" data-testid="total_tax">
+          ${parseFloat(totalTax.toFixed(2)).toLocaleString()}
+        </div>
       </div>
       <div className="flex-row calc-text">
         <div className="bold-600">Net pay</div>
@@ -22,7 +24,7 @@ function TaxSummary({
       </div>
       <div className="flex-row calc-text">
         <div>Effective Rate</div>
-        <div>{effectiveRate}%</div>
+        <div>{effectiveRate.toFixed(2)}%</div>
       </div>
     </div>
   );

@@ -1,138 +1,153 @@
-import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
-import { vi } from 'vitest';
+import { Mock, vi } from 'vitest';
+import '@testing-library/jest-dom';
+import { ReactNode } from 'react';
+
 import TaxCalculator from './TaxCalculator';
 import taxCalculateReducer from '../../slices/TaxCalculateSlice';
 import { useFetchTaxBracketsQuery } from '../../apis/TaxCalculateAPI';
 
-// Mock the API call
-vi.mock('../../features/tax_calculate/apis/TaxCalculateAPI', () => ({
+// Mock the Tax API hook
+vi.mock('../../apis/TaxCalculateAPI', () => ({
   useFetchTaxBracketsQuery: vi.fn(),
 }));
 
-const mockUseFetchTaxBracketsQuery = useFetchTaxBracketsQuery as jest.Mock;
-
-// Mock Redux store
-const renderWithStore = (initialState) => {
+// Helper function to render the component with Redux
+const renderWithRedux = (component: ReactNode) => {
   const store = configureStore({
-    reducer: { taxCalculate: taxCalculateReducer },
-    preloadedState: { taxCalculate: initialState },
+    reducer: {
+      taxCalculate: taxCalculateReducer,
+    },
   });
-
-  return render(
-    <Provider store={store}>
-      <TaxCalculator />
-    </Provider>
-  );
+  return render(<Provider store={store}>{component}</Provider>);
 };
 
-describe('TaxCalculator Component', () => {
-  it('should display loading state initially', () => {
-    mockUseFetchTaxBracketsQuery.mockReturnValue({
-      data: { tax_brackets: [] },
+describe('Tax Calculator Test suite', () => {
+  it('Check if Skeleton is Visible while fetching Data', () => {
+    const mockApiResponse = {
+      tax_brackets: [{ max: 20000, rate: 0.1 }],
+    };
+
+    (useFetchTaxBracketsQuery as Mock).mockReturnValue({
+      data: mockApiResponse,
       isFetching: true,
       isError: false,
+      refetch: vi.fn(),
     });
 
-    renderWithStore({
-      taxYear: 2022,
-      annualIncome: 0,
-      taxDetailsList: [],
-      totalTax: 0,
-      netPay: 0,
-      effectiveRate: 0,
-    });
-
-    expect(screen.getByText(/loading/i)).toBeInTheDocument();
+    renderWithRedux(<TaxCalculator />);
+    expect(screen.getByTestId('skeleton')).toBeVisible();
   });
 
-  //   it('should display error message on API error', async () => {
-  //     mockUseFetchTaxBracketsQuery.mockReturnValue({
-  //       data: { tax_brackets: [] },
-  //       isFetching: false,
-  //       isError: true,
-  //       error: { message: 'API Error' },
-  //     });
+  it('Check if Error View is Visible when API call fails', () => {
+    const mockApiResponse = {
+      tax_brackets: [{ max: 20000, rate: 0.1 }],
+    };
 
-  //     renderWithStore({
-  //       taxYear: 2022,
-  //       annualIncome: 0,
-  //       taxDetailsList: [],
-  //       totalTax: 0,
-  //       netPay: 0,
-  //       effectiveRate: 0,
-  //     });
-
-  //     await waitFor(() => {
-  //       expect(screen.getByText(/error/i)).toBeInTheDocument();
-  //     });
-  //   });
-
-  it('should display TaxForm and TaxDisplay on successful data fetch', async () => {
-    mockUseFetchTaxBracketsQuery.mockReturnValue({
-      data: {
-        tax_brackets: [{ min: 0, max: 50197, rate: 0.15 }],
+    (useFetchTaxBracketsQuery as Mock).mockReturnValue({
+      data: mockApiResponse,
+      isFetching: true,
+      isError: true,
+      error: {
+        data: {
+          errors: [
+            {
+              code: 'INTERNAL_SERVER_ERROR',
+              field: '',
+              message: 'Database not found!',
+            },
+          ],
+        },
       },
+      refetch: vi.fn(),
+    });
+
+    renderWithRedux(<TaxCalculator />);
+    expect(screen.getByText(/Something went wrong/i)).toBeVisible();
+  });
+
+  it('Check if TaxCalculator renders the TaxSummary,TaxBracket and TaxGraph  on successful API call ', async () => {
+    const mockApiResponse = {
+      tax_brackets: [
+        { max: 20000, rate: 0.1 },
+        { max: 50000, rate: 0.2 },
+        { max: null, rate: 0.3 },
+      ],
+    };
+
+    (useFetchTaxBracketsQuery as Mock).mockReturnValue({
+      data: mockApiResponse,
       isFetching: false,
       isError: false,
+      refetch: vi.fn(),
     });
-
-    renderWithStore({
-      taxYear: 2022,
-      annualIncome: 100000,
-      taxDetailsList: [
-        { id: 1, bracket: '$1 - $50197', amount: 7529, rate: 15 },
-      ],
-      totalTax: 0,
-      netPay: 0,
-      effectiveRate: 0,
-    });
-
+    renderWithRedux(<TaxCalculator />);
     await waitFor(() => {
-      expect(screen.getByLabelText(/Annual income/i)).toBeInTheDocument();
-      expect(screen.getByLabelText(/Select a Tax Year/i)).toBeInTheDocument();
+      // check if Tax summary (any one param) section is visible
+      expect(screen.getByText(/salary/i)).toBeVisible();
+      // check if Tax Bracket ((any one param) section is visible
+      expect(screen.getByText(/tax bracket/i)).toBeVisible();
+      // check if Tax Graph section is visible
+      expect(screen.getByTestId('tax_graph')).toBeVisible();
     });
-
-    // Check that TaxDisplay is rendered with calculated values
-    expect(screen.getByText(/total tax/i)).toBeInTheDocument();
-    expect(screen.getByText(/net pay/i)).toBeInTheDocument();
   });
 
-  //   it('should handle form submission and update state', async () => {
-  //     mockUseFetchTaxBracketsQuery.mockReturnValue({
-  //       data: {
-  //         tax_brackets: [
-  //           { min: 0, max: 50197, rate: 0.15 },
-  //           { min: 50197, max: 100392, rate: 0.205 },
-  //         ],
-  //       },
-  //       isFetching: false,
-  //       isError: false,
-  //     });
+  it('Check if Values get Updated on Clicking Calculate Button', async () => {
+    const mockApiResponse = {
+      tax_brackets: [
+        {
+          min: 0,
+          max: 50197,
+          rate: 0.15,
+        },
+        {
+          min: 50197,
+          max: 100392,
+          rate: 0.205,
+        },
+        {
+          min: 100392,
+          max: 155625,
+          rate: 0.26,
+        },
+        {
+          min: 155625,
+          max: 221708,
+          rate: 0.29,
+        },
+        {
+          min: 221708,
+          rate: 0.33,
+        },
+      ],
+    };
 
-  //     renderWithStore({
-  //       taxYear: 2022,
-  //       annualIncome: 0,
-  //       taxDetailsList: [],
-  //       totalTax: 0,
-  //       netPay: 0,
-  //       effectiveRate: 0,
-  //     });
+    (useFetchTaxBracketsQuery as Mock).mockReturnValue({
+      data: mockApiResponse,
+      isFetching: false,
+      isError: false,
+      refetch: vi.fn(),
+    });
 
-  //     fireEvent.change(screen.getByLabelText(/annual income/i), {
-  //       target: { value: '60000' },
-  //     });
-  //     fireEvent.change(screen.getByLabelText(/tax year/i), {
-  //       target: { value: '2022' },
-  //     });
+    renderWithRedux(<TaxCalculator />);
 
-  //     fireEvent.submit(screen.getByRole('button', { name: /calculate/i }));
+    await waitFor(() => {
+      const incomeInputField = screen.getByRole('spinbutton', {
+        name: /annual income/i,
+      });
+      const calculateButton = screen.getByRole('button', {
+        name: /calculate/i,
+      });
 
-  //     await waitFor(() => {
-  //       expect(screen.getByText(/total tax/i)).toBeInTheDocument();
-  //       expect(screen.getByText(/net pay/i)).toBeInTheDocument();
-  //     });
-  //   });
+      fireEvent.change(incomeInputField, { target: { value: 100000 } });
+      fireEvent.click(calculateButton);
+      const totalTax = screen.getByTestId('total_tax');
+
+      expect(totalTax.textContent).toBe('$17,739.17');
+      expect(screen.getByText(/salary/i)).toBeVisible();
+      expect(screen.getByTestId('tax_graph')).toBeVisible();
+    });
+  });
 });

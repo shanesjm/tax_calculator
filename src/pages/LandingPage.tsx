@@ -1,7 +1,7 @@
 import TaxCalculator from '../features/tax_calculate/components/tax_calculator/TaxCalculator';
-
-function Tax() {
+// usually the landing page will have header,footer,sideBar etc
+function LandingPage() {
   return <TaxCalculator />;
 }
 
-export default Tax;
+export default LandingPage;

@@ -17,3 +17,8 @@ export const TaxFormValidation = Yup.object({
     ),
   taxYear: Yup.number().required('Please select a tax year'),
 });
+
+export const TaxPieChartColors = {
+  orange: '#e34b31',
+  lightOrange: '#FFF1C9',
+};

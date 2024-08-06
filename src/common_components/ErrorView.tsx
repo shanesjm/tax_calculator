@@ -1,4 +1,4 @@
-import { Box, Typography } from '@mui/material';
+import { Box } from '@mui/material';
 import ResponsiveImage from './ResponsiveImage';
 import errorImage from '../images/error.png';
 
@@ -9,7 +9,6 @@ function ErrorView() {
       justifyContent="center"
       alignItems="center"
       flexDirection="column"
-      // height="100vh"
     >
       <ResponsiveImage
         src={errorImage}
@@ -21,16 +20,6 @@ function ErrorView() {
         Brace yourself till we get the error fixed. You may also refresh the
         page or try again later.
       </p>
-      {/* <Typography variant="h2" color="textSecondary">
-        Something went wrong.
-      </Typography>
-      <Typography variant="h6" color="textSecondary">
-        Brace yourself till we get the error fixed. You may also refresh the
-        page or try again later.
-      </Typography>
-      <Typography variant="h6" color="textSecondary">
-        You may also refresh the page or try again later.
-      </Typography> */}
     </Box>
   );
 }

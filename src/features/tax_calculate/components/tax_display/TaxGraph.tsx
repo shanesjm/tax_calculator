@@ -1,12 +1,13 @@
 import { Box } from '@mui/material';
 import { pieArcLabelClasses, PieChart } from '@mui/x-charts';
 import { TaxGraphProps } from '../../types/CalculateTaxTypes';
+import { TaxPieChartColors } from '../../../../constants/Constants';
 
 function TaxGraph({ netPayPercentage, totalTaxPercentage }: TaxGraphProps) {
   return (
-    <div className="tax-details-chart">
+    <div className="tax-details-chart" data-testid="tax_graph">
       <PieChart
-        colors={['#FFF1C9', '#e34b31']}
+        colors={[TaxPieChartColors.lightOrange, TaxPieChartColors.orange]}
         series={[
           {
             data: [
@@ -34,7 +35,12 @@ function TaxGraph({ netPayPercentage, totalTaxPercentage }: TaxGraphProps) {
       />
       <Box display="flex" justifyContent="center" marginTop={1}>
         <Box display="flex" alignItems="center" marginRight={2}>
-          <Box width={16} height={16} bgcolor="#FFF1C9" marginRight={1} />
+          <Box
+            width={16}
+            height={16}
+            bgcolor={TaxPieChartColors.lightOrange}
+            marginRight={1}
+          />
           <div>Net Pay</div>
         </Box>
         <Box display="flex" alignItems="center">

@@ -1,48 +1,44 @@
-type ApiError = {
-  code: string;
-  field: string;
-  message: string;
-};
+import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
+import { SerializedError } from '@reduxjs/toolkit';
+import {
+  ErrorType,
+  CustomErrorResponseType,
+} from '../common_types/CommonTypes';
 
-type Error = Error & {
-  status?: string;
-  error?: string;
-};
-
-type CustomError = {
-  code: string;
-  field: string;
-  message: string;
-};
-
-type CustomErrorResponseType = {
-  data: {
-    error: CustomError[];
-  };
-};
-
-export const handleApiError = (error: Error | CustomErrorResponseType) => {
+const handleApiError = (
+  error:
+    | FetchBaseQueryError
+    | SerializedError
+    | undefined
+    | CustomErrorResponseType
+) => {
+  // Transform the error message and log it
   let errorMessage = 'Something went wrong';
-  if (typeof error === 'object' && 'status' in error) {
-    if (error.status === 500) {
-      errorMessage =
-        error?.data?.errors?.[0]?.message || 'Internal server error';
-    }
-    if (error.status === 400) {
-      errorMessage = error?.data?.errors?.[0]?.message || 'Bad request';
-    }
-    if (error.status === 'FETCH_ERROR') {
-      errorMessage = 'Network error. Please check your internet connection.';
-    }
-    if (error.status === 'TIMEOUT_ERROR') {
+  let logMessage = '';
+  let code: string | number = '';
+
+  const customErrorResponseType = error as CustomErrorResponseType;
+
+  if (customErrorResponseType.data?.errors?.length) {
+    logMessage = customErrorResponseType.data.errors[0].message;
+    code = customErrorResponseType.data.errors[0].code;
+  } else {
+    const comonErrorType = error as ErrorType;
+    code = comonErrorType.status;
+    logMessage = comonErrorType.error;
+
+    if (comonErrorType.status === 'TIMEOUT_ERROR') {
       errorMessage = 'The request timed out. Please try again later.';
     }
   }
+  // Ideally we should use libraries like Sentry for logging
+  // eslint-disable-next-line no-console
   console.error({
     timeStamp: new Date(),
-    status: error.status || 500,
-    message: errorMessage,
+    code,
+    message: logMessage,
   });
+  return errorMessage;
 };
 
 export default handleApiError;

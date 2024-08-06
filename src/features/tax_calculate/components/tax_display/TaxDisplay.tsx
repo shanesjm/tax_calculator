@@ -1,5 +1,4 @@
 import { Card } from '@mui/material';
-
 import './TaxDisplay.css';
 import { TaxDisplayProps } from '../../types/CalculateTaxTypes';
 import ErrorView from '../../../../common_components/ErrorView';

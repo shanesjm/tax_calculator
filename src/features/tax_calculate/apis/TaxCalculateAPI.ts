@@ -3,6 +3,7 @@ import { TaxApiDTO } from '../types/CalculateTaxTypes';
 
 const BASE_API_URL = import.meta.env.VITE_API_URL;
 
+// Used Redux Toolkit Queries for API caching
 export const TaxCalculateAPI = createApi({
   reducerPath: 'api',
   baseQuery: fetchBaseQuery({
@@ -19,4 +20,5 @@ export const TaxCalculateAPI = createApi({
   },
 });
 
+// Redux Toolkit Queries exposes a hook with the name use<FunctionName> for API calls and caching
 export const { useFetchTaxBracketsQuery } = TaxCalculateAPI;
