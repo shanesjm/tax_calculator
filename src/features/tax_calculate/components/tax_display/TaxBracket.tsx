@@ -12,7 +12,7 @@ function TaxBracket({ taxDetailsList }: TaxBracketProps) {
         taxDetailsList.map(({ id, bracket, rate, amount }: TaxDetails) => {
           return (
             <div className="flex-row calc-text table-text" key={id}>
-              <div>{bracket.replace('$∞', '∞')}</div>
+              <div>{bracket.replace('- $∞', '& above')}</div>
               <div>{rate.toFixed(2)} %</div>
               <div>${amount.toLocaleString()}</div>
             </div>
