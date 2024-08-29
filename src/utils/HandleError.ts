@@ -11,6 +11,7 @@ const handleApiError = (
     | SerializedError
     | undefined
     | CustomErrorResponseType
+    | unknown
 ) => {
   // Transform the error message and log it
   let errorMessage = 'Something went wrong';
